@@ -1,3 +1,0 @@
-auth_ldap=/etc/ldap.conf
-init_name=nslcd
-secret=/etc/ldap.secret

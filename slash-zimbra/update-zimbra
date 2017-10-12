@@ -16,8 +16,13 @@ chmod +w /opt/zimbra/conf/attrs/zimbra-attrs.xml
 chmod -R o+w /opt/zimbra/common/etc/openldap/zimbra
 cp ${DN}/junit-4.8.2.jar  /opt/zimbra/jetty/webapps/service/WEB-INF/lib/.
 echo "zimbra:zimbra" | chpasswd
+echo "Allow unauthenticated PINGs. This is required by the SOAP-Harness tests"
 sudo -i -u zimbra zmlocalconfig -e allow_unauthed_ping=true
+echo "Enable mailbox debugging"
 /zimbra/enable-debug.sh
+echo "Enabling local mail delivery"
+sudo -i -u zimbra zmprov mcf zimbraMtaLmtpHostLookup native
+echo "Restaring mailbox"
 sudo -i -u zimbra zmmailboxdctl restart
 
 OZ=${DN}/opt-zimbra

@@ -24,7 +24,8 @@ RUN apt-get update && \
     rsyslog \
     software-properties-common \
     vim \
-    wget
+    wget && \
+	apt-get clean
 
 # Trick build into skipping resolvconf as docker overrides for DNS
 # This is currently required by our installer script. Hopefully be
@@ -32,19 +33,20 @@ RUN apt-get update && \
 # on the `resolvconf` package, and configuration of that is what
 # is breaking install.sh
 RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
-COPY ./slash-zimbra-base /zimbra
 RUN mkdir -p /tmp/release && \
-    curl -s -k -o /tmp/zcs.tgz 'https://zcsdocker.s3.amazonaws.com/zcs-8.8.1_BETA1_2000.UBUNTU16_64.20170915161631.tgz' && \
-    tar xzvf /tmp/zcs.tgz -C /tmp/release --strip-components=1 && \
+    curl -s -k -o /tmp/zcs.tgz 'https://files.zimbra.com.s3.amazonaws.com/downloads/8.8.4_GA/zcs-8.8.4_GA_1877.UBUNTU16_64.20170907123951.tgz' && \	
+	tar xzvf /tmp/zcs.tgz -C /tmp/release --strip-components=1 && \
     rm /tmp/zcs.tgz
+COPY ./slash-zimbra-base /zimbra
 WORKDIR /tmp/release
-RUN groupadd -r -g 1000 zimbra && \
+RUN chmod +x /zimbra/init && \
+	groupadd -r -g 1000 zimbra && \
     useradd -r -g zimbra -u 1000 -b /opt -s /bin/bash zimbra && \
     sed -i.bak 's/checkRequired/# checkRequired/' install.sh && \
-    ./install.sh -s -x --skip-upgrade-check < /zimbra/software-install-responses
-WORKDIR /tmp
-RUN rm -rf /tmp/release
+    ./install.sh -s -x --skip-upgrade-check < /zimbra/software-install-responses && \
+	rm -rf /tmp/release && \
+	apt-get clean && \
+	chmod +x /zimbra/init
 WORKDIR /zimbra
-RUN chmod +x /zimbra/init
 CMD /zimbra/init
 EXPOSE 22 25 80 110 143 443 465 587 993 995 7071 8443 9998 9999

@@ -1,5 +1,8 @@
 # Overview
 
+This provides a container with ZCS installed and configured for development work.
+
+
 ## Docker Installation/Configuration
 
 Three different Docker installation/configuration instructions are provided below.
@@ -107,10 +110,6 @@ and your actual first and last name. This information is used to initialize the
 `.gitconfig` file that is installed into `/opt/zimbra`. This file is in the
 `.gitignore` file so you don't accidentally commit changes to it.
 
-The other setting in that file `ROOT_PASSWORD` is for the webadmin interface
-to BIND.  You can access this webadmin interface from a browser on your
-host by going to `https://localhost:10000`. Log in with username `root`
-and password with whatever is specified by `ROOT_PASSWORD`.
 
 _NOTE_: If you are using [docker-machine](https://docs.docker.com/machine/get-started/) with [VirtualBox](https://www.virtualbox.org/wiki/VirtualBox), you will have to go into the _Network_ preferences for the `default` VM in _Virtualbox Manager_ and add a port forwarding rule.
 
@@ -145,17 +144,6 @@ don't accidentally commit ssh keys to the git repo.
 
 ## Running the system
 
-Start by _downloading_ or _building_ the base image.
-
-### Downloading the base image
-
-	docker pull zimbra/zcs-dev:8.8.5alpha
-
-### Building the base image
-
-	./build-image
-
-
 Just do a `docker-compose up -d` to start your development containers.
 
 Once the `docker-compose up -d` command returns, the containers are running.
@@ -164,7 +152,6 @@ the run time initialization.  This takes about 1 minute. The majority of the tim
 required to complete the initialization is with starting the Zimbra services.
 
 You can run this command to observe the initialization progress:
-
 
     docker logs -f zcs-dev
 
@@ -184,32 +171,16 @@ And become the `zimbra` user as follows:
 
     su - zimbra
 
-## Two containers are started
-
-### bind
-
-The container named `bind` is running bind DNS. This is used by the second container
-that is running a single-node ZCS installation, all setup and ready do do development
-with.  The directory `bind-data` is where all of the DNS configuration is stored,
-so if you do make updates via the web interface, they will be saved and persisted
-in that directory (which is mounted into this container at `/data`).
-
-This container is based off the image `sameersbn/bind:9.9.5-20170626`.  You 
-can read more about it [here](https://github.com/sameersbn/docker-bind).
-
-### zcs-dev
-
-This is the container that running the ZCS installation.
 
 ## Miscellaneous Notes
 
-To stop your containers, just do this:
+To stop your container, just do this:
 
 	docker_compose down
 
-As an alternative to stopping the containers when you are not actively working
-on them, you can pause them to reduce resource consumption (`docker-compose pause`)
-an unpause them when you want to use them (`docker-compose unpause`).
+As an alternative to stopping the container when you are not actively working
+on it, you can pause it to reduce resource consumption (`docker-compose pause`)
+an unpause it when you want to use it (`docker-compose unpause`).
 
 You should edit the `/etc/hosts` file on your, um, host and add a line like this:
 
