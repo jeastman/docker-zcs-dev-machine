@@ -154,6 +154,7 @@ Your container also has all of the dependencies needed to build the installer.  
 - Make sure that the permissions of the top-level directory (from which you are running the build) are set to `755`.
 - Make sure the output of the `umask` command for the user that is creating the build (`zimbra` in this case) is `0022`.  If it is not, enter `umask 0022` before running the build script.
 
+
 ## Performance Notes
 
 There are known performance issues with [bind mounts](https://docs.docker.com/engine/admin/volumes/bind-mounts/) when using Docker on non-Linux hosts.  The _docker-zcs-dev-machine_ currently makes use of bind mounts as a convenience to the developer. It allows one to edit files from the host operating system and have those changes be available inside the running container.  The down side is that on non-Linux hosts, it takes longer to do builds, etc., because the container build process is reading from and writing to the mounted directory. What follows are a couple of suggestions that can _dramatically_ improve the performance.
@@ -278,3 +279,15 @@ You can also add the repositories as extra remotes in your host copies of the re
     zcs-dev ssh://zimbra@zcs-dev.test:2222/home/zimbra/zcs/zm-mailbox (push)
 
 So you can `git fetch zcs-dev`, etc.  Very convenient.
+
+## SOLR Support
+
+So make sure you have read the _Additional Configuration/SOLR-related Environment Variables_ section above first. A convenient script has been provided for you to use to update the base ZCS deployment to support SOLR.  That script is located in the `bin` repo directory and is called `configure-zcs-for-solr`.  After you have brought up your dev cluster and ZCS is up and running, just copy that script over to the top-level directory where you have all of your Zimbra repos checked out.
+
+Then, _make sure you read and follow_ the comments at the top of the script.  Then (while logged into the `zcs-dev` container), run the script (as `root`, from the top-level directory on the container where you have all of your repos checked-out and prepared according to the notes at the top of the script).
+
+The script is pretty noisy so I would recommend running it as follows:
+
+    ./configure-zcs-for-solr > /dev/null
+
+The script outputs status messages as it does its work to _stderr_ so you will be kept informed as it runs.
