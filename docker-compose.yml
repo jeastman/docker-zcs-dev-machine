@@ -7,8 +7,8 @@ services:
     entrypoint:
       - /zimbra/init
     volumes:
-      - ./slash-zimbra:/zimbra/
-      - $HOME_ZIMBRA:/home/zimbra/
+      - $REPO_DIR/slash-zimbra:/zimbra
+      - $HOME_ZIMBRA:/home/zimbra
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev
