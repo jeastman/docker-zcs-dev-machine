@@ -42,7 +42,7 @@ services:
     ports:
       - "8983:8983"
     volumes:
-      - ./solr:/solr
+      - $REPO_DIR/solr:/solr
 
 networks:
   default:
