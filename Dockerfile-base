@@ -34,7 +34,7 @@ RUN apt-get update && \
 # is breaking install.sh
 RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
 RUN mkdir -p /tmp/release && \
-    curl -s -k -o /tmp/zcs.tgz 'https://files.zimbra.com.s3.amazonaws.com/downloads/8.8.4_GA/zcs-8.8.4_GA_1877.UBUNTU16_64.20170907123951.tgz' && \	
+    curl -s -k -o /tmp/zcs.tgz 'https://files.zimbra.com.s3.amazonaws.com/downloads/8.8.5_GA/zcs-8.8.5_GA_1894.UBUNTU16_64.20171026035615.tgz' && \
 	tar xzvf /tmp/zcs.tgz -C /tmp/release --strip-components=1 && \
     rm /tmp/zcs.tgz
 COPY ./slash-zimbra-base /zimbra
