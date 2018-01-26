@@ -176,7 +176,7 @@ If you want even better performance on non-Linux hosts, you can do so at the cos
 
 #### Enable Docker Volumes
 
-To enable this option, just apply the following changes. First, to the `docker-compose.yml` file:
+To enable this option, just apply the following changes. Just update the `docker-compose.yml` file as follows:
 
     $ git diff docker-compose.yml
     diff --git a/docker-compose.yml b/docker-compose.yml
@@ -200,25 +200,15 @@ To enable this option, just apply the following changes. First, to the `docker-c
     +volumes:
     +  home_zimbra: {}
 
-Then, to the file `update-zimbra`, located in the `slash-zimbra` directory in the repo:
 
-    $ git diff slash-zimbra/update-zimbra
-    diff --git a/slash-zimbra/update-zimbra b/slash-zimbra/update-zimbra
-    index b74b3f6..aebe46c 100755
-    --- a/slash-zimbra/update-zimbra
-    +++ b/slash-zimbra/update-zimbra
-    @@ -6,6 +6,7 @@
-     # * GITNAME - Your first and last name.
+When you bring the container up via `docker-compose up -d`, you will see that Docker has automatically created a volume for you:
 
-     DN=$(dirname $0)
-    +chown zimbra:zimbra /home/zimbra
-     chown zimbra:zimbra /opt/zimbra/.
-     chown zimbra:zimbra /opt/zimbra/.*
-     chmod -R o+w /opt/zimbra/lib/
+    $ docker volume ls | grep devmachine
+    local               dockerzcsdevmachine_home_zimbra
 
+This volume will persist across container stops and starts.
 
 #### Copy using docker cp
-
 
 On host:
 
@@ -264,3 +254,4 @@ You can also add the repositories as extra remotes in your host copies of the re
     zcs-dev ssh://zimbra@zcs-dev.test:2222/home/zimbra/zcs/zm-mailbox (push)
 
 So you can `git fetch zcs-dev`, etc.  Very convenient.
+

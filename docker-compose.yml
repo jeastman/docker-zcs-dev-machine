@@ -8,13 +8,12 @@ services:
       - /zimbra/init
     volumes:
       - $REPO_DIR/slash-zimbra:/zimbra
-      - $HOME_ZIMBRA:/home/zimbra
+      - home_zimbra:/home/zimbra
       - type: volume
         source: opt_zimbra
         target: /opt/zimbra
         volume:
           nocopy: false
-
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev
@@ -39,4 +38,5 @@ networks:
         - subnet: 10.0.0.0/24
 
 volumes:
+  home_zimbra: {}
   opt_zimbra: {}
