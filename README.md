@@ -304,4 +304,26 @@ On container:
     drwxr-xr-x  3 502 dialout 4096 Aug 18 20:23 zm-zcs
 
 
-On my Mac host, execution times for cleaning, building, deploying locally, and publishing all of the sub-components of `zm-mailbox` went from `4m10s` to `0m52s`.
+On my Mac host, execution times for cleaning, building, deploying locally, and publishing all of the sub-components of `zm-mailbox` went from `4m10s` to `0m52s`. 
+
+#### Copy using scp or rsync
+
+You may also `scp` or `rsync` files from the host to the container.  This is really convenient and you don't have any permissions issues with the `/home/zimbra/*` destination so long as you do so using the `zimbra` user.  Remember that Docker exposes container ports to this host using port mappings.  The default SSH port mapping, as defined in `docker-compose.yml` is `2222`.  Some example:
+
+	ssh -p 2222 zimbra@localhost
+
+Or, if you have added an entry in your `/etc/hosts` file on your host that maps the `zcs-dev.test` domain to `127.0.0.1`:
+
+	ssh -p 2222 zimbra@zcs-dev.test
+
+You can authenticate with a password or by putting a public key over on the container.  There is a mechanism already in place for doing this automatically.  Just add a file called `authorized_keys` to the repo directory `slash-zimbra/opt-zimbra/DOT-ssh/`.  It should contain the public key that you wish to use when connecting from your host.  As noted above, that directory is in `.gitignore` so you don't accidentally `git add` it.  Whatever you put in that `authorized_keys` files gets _appended_ to the file `/opt/zimbra/.ssh/authorized_keys`, so we don't accidentally overwrite what the Zimbra setup process puts there.
+
+You can also add the repositories as extra remotes in your host copies of the repos.  For example:
+
+    $ git remote -v
+    origin  git@github.com:Zimbra/zm-mailbox.git (fetch)
+    origin  git@github.com:Zimbra/zm-mailbox.git (push)
+    zcs-dev ssh://zimbra@zcs-dev.test:2222/home/zimbra/zcs/zm-mailbox (fetch)
+    zcs-dev ssh://zimbra@zcs-dev.test:2222/home/zimbra/zcs/zm-mailbox (push)
+
+So you can `git fetch zcs-dev`, etc.  Very convenient.

@@ -6,6 +6,7 @@
 # * GITNAME - Your first and last name.
 
 DN=$(dirname $0)
+chown zimbra:zimbra /home/zimbra
 chown zimbra:zimbra /opt/zimbra/.
 chown zimbra:zimbra /opt/zimbra/.*
 chmod -R o+w /opt/zimbra/lib/
@@ -22,7 +23,7 @@ echo "Enable mailbox debugging"
 /zimbra/enable-debug.sh
 echo "Enabling local mail delivery"
 sudo -i -u zimbra zmprov mcf zimbraMtaLmtpHostLookup native
-echo "Restaring mailbox"
+echo "Restarting mailbox"
 sudo -i -u zimbra zmmailboxdctl restart
 
 OZ=${DN}/opt-zimbra
@@ -31,8 +32,16 @@ do
     F=${OZ}/${f}
     if [ "$f" = "DOT-ssh" ]
     then
-        cp ${F}/* /opt/zimbra/.ssh
+		for f2 in ${F}/*; do
+			if [ $(basename $f2) = "authorized_keys" ]; then
+				cat ${f2} >> /opt/zimbra/.ssh/authorized_keys
+			else
+				cp ${f2} /opt/zimbra/.ssh/
+			fi
+		done
+
         chown zimbra /opt/zimbra/.ssh/*
+		chmod 600 /opt/zimbra/.ssh/*
     fi
 
     if [ -f "${F}" ]
@@ -45,3 +54,6 @@ done
 
 sed -i.bak "s/GITEMAIL/${GITEMAIL}/" /opt/zimbra/.gitconfig
 sed -i.bak "s/GITNAME/${GITNAME}/" /opt/zimbra/.gitconfig
+
+echo "Starting ssh service..."
+/usr/sbin/service ssh start
