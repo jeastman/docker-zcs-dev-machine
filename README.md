@@ -203,3 +203,105 @@ Your container also has all of the dependencies needed to build the installer.  
 
 - Make sure that the permissions of the top-level directory (from which you are running the build) are set to `755`.
 - Make sure the output of the `umask` command for the user that is creating the build (`zimbra` in this case) is `0022`.  If it is not, enter `umask 0022` before running the build script.
+
+## Performance Notes
+
+There are known performance issues with [bind mounts](https://docs.docker.com/engine/admin/volumes/bind-mounts/) when using Docker on non-Linux hosts.  The _docker-zcs-dev-machine_ currently makes use of bind mounts as a convenience to the developer. It allows one to edit files from the host operating system and have those changes be available inside the running container.  The down side is that on non-Linux hosts, it takes longer to do builds, etc., because the container build process is reading from and writing to the mounted directory. What follows are a couple of suggestions that can _dramatically_ improve the performance.
+
+### Volume caching
+
+The easiest thing to do, if you have Mac host, is to just enable one of the volume caching options in your `docker-compose.yml` file, as follows:
+
+    $ git diff
+    diff --git a/docker-compose.yml b/docker-compose.yml
+    index 59ee00c..4548c7c 100644
+    --- a/docker-compose.yml
+    +++ b/docker-compose.yml
+    @@ -8,7 +8,7 @@ services:
+           - /zimbra/init
+         volumes:
+           - $REPO_DIR/slash-zimbra:/zimbra
+    -      - $HOME_ZIMBRA:/home/zimbra
+    +      - $HOME_ZIMBRA:/home/zimbra:delegated
+         container_name: zcs-dev
+         domainname: test
+         hostname: zcs-dev
+
+As you can see from the diff, I just added `:delegated` to the end of the `/home/zimbra` volume mount.  To read more about the various caching options, please refer to the following references:
+
+- [CACHING OPTIONS FOR VOLUME MOUNTS - DOCKER FOR MAC](https://docs.docker.com/compose/compose-file/#caching-options-for-volume-mounts-docker-for-mac)
+- [Tuning with consistent, cached, and delegated configurations](https://docs.docker.com/docker-for-mac/osxfs-caching/#tuning-with-consistent-cached-and-delegated-configurations)
+
+On my Mac host, execution times for cleaning, building, deploying locally, and publishing all of the sub-components of `zm-mailbox` went from `4m10s` to `1m30s`.
+
+### Docker Volumes
+
+If you want even better performance on non-Linux hosts, you can do so at the cost of a little inconvenience. Basically you have to copy the files that you want from your host to your container.  You can, of course, just **checkout the repos from the container directly**.
+
+#### Enable Docker Volumes
+
+To enable this option, just apply the following changes. First, to the `docker-compose.yml` file:
+
+    $ git diff docker-compose.yml
+    diff --git a/docker-compose.yml b/docker-compose.yml
+    index 59ee00c..a013f03 100644
+    --- a/docker-compose.yml
+    +++ b/docker-compose.yml
+    @@ -8,7 +8,7 @@ services:
+           - /zimbra/init
+         volumes:
+           - $REPO_DIR/slash-zimbra:/zimbra
+    -      - $HOME_ZIMBRA:/home/zimbra
+    +      - home_zimbra:/home/zimbra:delegated
+         container_name: zcs-dev
+         domainname: testn
+         hostname: zcs-dev
+    @@ -31,3 +31,6 @@ networks:
+           driver: default
+           config:
+             - subnet: 10.0.0.0/24
+    +
+    +volumes:
+    +  home_zimbra: {}
+
+Then, to the file `update-zimbra`, located in the `slash-zimbra` directory in the repo:
+
+    $ git diff slash-zimbra/update-zimbra
+    diff --git a/slash-zimbra/update-zimbra b/slash-zimbra/update-zimbra
+    index b74b3f6..aebe46c 100755
+    --- a/slash-zimbra/update-zimbra
+    +++ b/slash-zimbra/update-zimbra
+    @@ -6,6 +6,7 @@
+     # * GITNAME - Your first and last name.
+
+     DN=$(dirname $0)
+    +chown zimbra:zimbra /home/zimbra
+     chown zimbra:zimbra /opt/zimbra/.
+     chown zimbra:zimbra /opt/zimbra/.*
+     chmod -R o+w /opt/zimbra/lib/
+
+
+#### Copy using docker cp
+
+
+On host:
+
+    $ docker cp $HOST_REPO_DIR/zm-zcs zcs-dev:/home/zimbra/
+    $ docker cp $HOST_REPO_DIR/zm-mailbox zcs-dev:/home/zimbra/
+	$ docker exec zcs-dev chown -R zimbra:zimbra /home/zimbra
+    $ docker exec -it zcs-dev bash
+
+The reason for the _chown_ command is because without that you can have funky permissions on the directories/files you copied from the host to the container via the use of the `docker cp` command.  For example, the two directories I copied over in the above example had these permissions without "fixing" them after the copy:
+
+On container:
+
+    su - zimbra
+    cd /home/zimbra
+
+    $ ls -l
+    total 8
+    drwxr-xr-x 13 502 dialout 4096 Jan 26 14:20 zm-mailbox
+    drwxr-xr-x  3 502 dialout 4096 Aug 18 20:23 zm-zcs
+
+
+On my Mac host, execution times for cleaning, building, deploying locally, and publishing all of the sub-components of `zm-mailbox` went from `4m10s` to `0m52s`.
