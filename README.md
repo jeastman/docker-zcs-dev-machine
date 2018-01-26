@@ -180,7 +180,7 @@ And become the `zimbra` user as follows:
 
 To stop your container, just do this:
 
-	docker_compose down
+    docker-compose down
 
 As an alternative to stopping the container when you are not actively working
 on it, you can pause it to reduce resource consumption (`docker-compose pause`)
