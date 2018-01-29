@@ -1,6 +1,6 @@
 [user]
-	email = GITEMAIL
-	name = GITNAME
+    email = GITEMAIL
+    name = GITNAME
 [color]
     diff = auto
     status = auto
@@ -17,14 +17,15 @@
     # git dt 4.1 srv-111 | vim -
     dt = diff-tree -r
     lg = log -p
-	# Usage: git logf BASE-COMMIT..END-COMMIT
-	logf = log --decorate --pretty='format: %h [%an %aI] %s' --abbrev-commit
+    # Usage: git logf BASE-COMMIT..END-COMMIT
+    logf = log --decorate --pretty='format: %h [%an %aI] %s' --abbrev-commit
     lol = log --graph --decorate --pretty=oneline --abbrev-commit
     loll = log --graph --decorate --pretty='format: %h [%an]%d %s' --abbrev-commit
     lolwc = log --decorate --pretty='format: %h [%an %at] %s' --abbrev-commit
     lolw = log --decorate --pretty='format: [%an] %s' --abbrev-commit
     lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
     lala = log --graph --decorate --pretty='format: %Cblue%h%Creset [%an]%Cred%d %Cgreen%s' --abbrev-commit --all
+    lalw = log --graph --decorate --pretty='format: %Cblue%h%Creset [%an]%Cred%d %Cgreen%s' --abbrev-commit
     ls = ls-files
     # Remote all of the remote tracking branches except for mine and mezeo's
     # it is a good idea to do a "git gc" afterwards...
@@ -32,6 +33,7 @@
     # Show files ignored by git:
     ign = ls-files -o -i --exclude-standard
     log-tree = log --graph --pretty='format:%d%x09%h (%an) %s%n' --all
+
 [gitflow "prefix"]
 	feature = feature/
 	bugfix = bugfix/
@@ -41,15 +43,13 @@
 	versiontag = 
 [gitflow "init"]
 	defaults = true
-[gitflow]
-	default-config-version = 3
 [gitflow "feature.finish"]
 	fetch = true
 	keeplocal = false
-	keepremote = false
+	keepremote = true
 	preserve-merges = true
-	push = true
 	rebase = true
+	push = true
 [gitflow "feature.rebase"]
 	interactive = true
 	preserve-merges = true
@@ -58,9 +58,10 @@
 [gitflow "bugfix.finish"]
 	fetch = true
 	keeplocal = false
-	keepremote = false
+	keepremote = true
 	preserve-merges = true
 	rebase = true
+	push = true
 [gitflow "bugfix.rebase"]
 	interactive = true
 	preserve-merges = true
@@ -85,3 +86,5 @@
 	squash = false
 [gitflow "hotfix.start"]
 	fetch = true
+[gitflow]
+	default-config-version = 4
