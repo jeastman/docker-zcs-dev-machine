@@ -32,7 +32,7 @@ services:
       - "9998:9998"
       - "9999:9999"
   solr:
-    image: zimbra/zm-solr-docker
+    image: zimbra/zm-solr-docker:7.2-20180212
     container_name: solr
     env_file: .env
     networks:
