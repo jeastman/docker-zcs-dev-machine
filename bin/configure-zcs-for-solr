@@ -137,9 +137,11 @@ sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraSolrReplicationFactor 1"
 if [ "$SOLR_MODE" = "cloud" ]; then
 	log_info "Updating zimbraIndexURL - cloud mode"
 	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraIndexURL solrcloud:solr:9983"
+	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraEventBackendURL solrcloud:solr:9983"
 else
 	log_info "Updating zimbraIndexURL - standalone mode"
 	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraIndexURL solr:http://solr:8983/solr"
+	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraEventBackendURL solr:http://solr:8983/solr"
 fi
 log_info "restarting services"
 sudo -i -u zimbra /bin/bash -c "zmcontrol restart"
