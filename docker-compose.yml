@@ -10,13 +10,12 @@ services:
       - /zimbra/init
     volumes:
       - $REPO_DIR/slash-zimbra:/zimbra
-      - $HOME_ZIMBRA:/home/zimbra
+      - $HOME_ZIMBRA:/home/zimbra:delegated
       - type: volume
         source: opt_zimbra
         target: /opt/zimbra
         volume:
           nocopy: false
-
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev
@@ -32,7 +31,7 @@ services:
       - "9998:9998"
       - "9999:9999"
   solr:
-    image: zimbra/zm-solr-docker:7.2-20180212
+    image: zimbra/zm-solr-docker:7.2-20180221
     container_name: solr
     env_file: .env
     networks:
