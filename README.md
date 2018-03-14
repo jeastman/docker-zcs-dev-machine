@@ -251,6 +251,7 @@ You may also `scp` or `rsync` files from the host to the container.  This is rea
 Or, if you have added an entry in your `/etc/hosts` file on your host that maps the `zcs-dev.test` domain to `127.0.0.1`:
 
 	ssh -p 2222 zimbra@zcs-dev.test
+	rsync -e 'ssh -p 2222' --del --exclude build -avz zm-zcs/ zimbra@zcs-dev.test:/home/zimbra/zcs/zm-zcs/
 
 You can authenticate with a password or by putting a public key over on the container.  There is a mechanism already in place for doing this automatically.  Just add a file called `authorized_keys` to the repo directory `slash-zimbra/opt-zimbra/DOT-ssh/`.  It should contain the public key that you wish to use when connecting from your host.  As noted above, that directory is in `.gitignore` so you don't accidentally `git add` it.  Whatever you put in that `authorized_keys` files gets _appended_ to the file `/opt/zimbra/.ssh/authorized_keys`, so we don't accidentally overwrite what the Zimbra setup process puts there.
 
