@@ -13,8 +13,9 @@
 # 1. Check out the develop branch of zm-zcs
 # 2. Check out the feature/solr branch of zm-build. If necessary create & populate the
 #    following files in zm-build/RE: MAJOR, MINOR, MICRO
-# 3. Check out the feature/solr branch of zm-mailbox and run `ant publish-foss-local`
-#    from inside zm-mailbox/store.
+# 3. Check out the feature/solr branch of zm-mailbox
+#    Run `ant clean` from zm-mailbox directory
+#    Run `ant publish-foss-local` from zm-mailbox/store directory
 # 4. Check out the feature/solr branch of zm-solr and run `ant clean compile jar` from
 #    inside zm-solr.
 #
