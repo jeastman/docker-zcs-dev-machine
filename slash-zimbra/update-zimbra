@@ -17,6 +17,8 @@ chmod -R o+w /opt/zimbra/common/etc/openldap/schema
 chmod o+w /opt/zimbra/conf/zimbra.ldif
 chmod +w /opt/zimbra/conf/attrs/zimbra-attrs.xml
 chmod -R o+w /opt/zimbra/common/etc/openldap/zimbra
+
+
 cp ${DN}/junit-4.8.2.jar  /opt/zimbra/jetty/webapps/service/WEB-INF/lib/.
 echo "zimbra:zimbra" | chpasswd
 echo "Allow unauthenticated PINGs. This is required by the SOAP-Harness tests"

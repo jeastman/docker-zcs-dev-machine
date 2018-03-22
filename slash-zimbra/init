@@ -3,6 +3,9 @@ ldap_db_path=/opt/zimbra/data/ldap/mdb/db/data.mdb
 
 if [ -f "${ldap_db_path}" ]; then
     echo "${ldap_db_path} exists. Skipping LDAP backup restore"
+    chown zimbra:zimbra /home/zimbra
+    chown zimbra:zimbra /opt/zimbra/.
+    chown zimbra:zimbra /opt/zimbra/.*
     echo "Starting services"
     sudo -i -u zimbra zmcontrol start
 else
