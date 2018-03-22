@@ -99,6 +99,9 @@ chmod 444 /opt/zimbra/db/db.sql
 log_info "purging old lucene jar files"
 find /opt/zimbra -name 'lucene-*3.5*.jar' -delete
 
+log_info "purging old zkclient jar files"
+find /opt/zimbra -name 'zkclient*.jar' -delete
+
 for d in native common soap client store; do 
     log_info "publishing local deps for zm-mailbox/$d"
     sudo -i -u zimbra /bin/bash -c "cd $zcs/zm-mailbox/$d; ant clean compile publish-local"
@@ -106,7 +109,7 @@ done
 sudo -i -u zimbra /bin/bash -c "zmmailboxdctl restart"
 
 
-for j in lucene-core-6.6.0.jar lucene-analyzers-common-6.6.0.jar solr-solrj-6.6.0.jar solr-core-6.6.0.jar noggit-0.7.jar httpmime-4.3.5.jar zookeeper-3.4.5.jar; do 
+for j in lucene-core-7.2.1.jar lucene-analyzers-common-7.2.1.jar solr-solrj-7.2.1.jar solr-core-7.2.1.jar noggit-0.7.jar httpmime-4.3.5.jar zookeeper-3.4.5.jar; do 
     jp=$(find /home/zimbra/.ivy2/cache -name $j)
         log_info "installing $jp"
 	cp $jp /opt/zimbra/lib/jars/
