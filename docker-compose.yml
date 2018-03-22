@@ -2,13 +2,19 @@ version: "3.3"
 
 services:
   zcs-dev:
-    image: zimbra/zcs-dev:8.8.6.1ga
+    image: zimbra/zcs-dev:8.8.6.2ga
     env_file: .env
     entrypoint:
       - /zimbra/init
     volumes:
       - $REPO_DIR/slash-zimbra:/zimbra
       - $HOME_ZIMBRA:/home/zimbra
+      - type: volume
+        source: opt_zimbra
+        target: /opt/zimbra
+        volume:
+          nocopy: false
+
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev
@@ -31,3 +37,6 @@ networks:
       driver: default
       config:
         - subnet: 10.0.0.0/24
+
+volumes:
+  opt_zimbra: {}

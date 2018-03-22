@@ -1,8 +1,12 @@
 #!/bin/bash
 
+echo "running zmsetup.pl"
 /opt/zimbra/libexec/zmsetup.pl -c /zimbra/zimbra-config
+echo "stopping services"
 sudo -i -u zimbra zmcontrol stop
-# backup ldap and remove ldap database file
+echo 'Removing automatic startup of zimbra from /etc/rc*.d'
+update-rc.d -f zimbra remove
+echo "backing up ldap and remove ldap database file"
 cd /opt/zimbra/data/ldap/mdb/db
 sudo -i -u zimbra /opt/zimbra/libexec/zmslapcat /opt/zimbra/data/ldap/mdb/db
 rm data.mdb

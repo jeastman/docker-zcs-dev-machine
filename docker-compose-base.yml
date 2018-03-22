@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-base
-    image: zimbra/zcs-dev-base:8.8.6.1ga
+    image: zimbra/zcs-dev-base:8.8.6.2ga
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev

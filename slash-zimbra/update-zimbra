@@ -6,6 +6,8 @@
 # * GITNAME - Your first and last name.
 
 DN=$(dirname $0)
+
+echo "Performing updates for development"
 chown zimbra:zimbra /home/zimbra
 chown zimbra:zimbra /opt/zimbra/.
 chown zimbra:zimbra /opt/zimbra/.*
@@ -55,5 +57,3 @@ done
 sed -i.bak "s/GITEMAIL/${GITEMAIL}/" /opt/zimbra/.gitconfig
 sed -i.bak "s/GITNAME/${GITNAME}/" /opt/zimbra/.gitconfig
 
-echo "Starting ssh service..."
-/usr/sbin/service ssh start

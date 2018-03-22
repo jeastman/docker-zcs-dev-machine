@@ -1,12 +1,20 @@
 #!/bin/bash
-# usage: slapadd [-v] [-d debuglevel] [-f configfile] [-F configdir] [-o <name>[=<value>]] [-c]
-#         [-g] [-n databasenumber | -b suffix]
-#         [-l ldiffile] [-j linenumber] [-q] [-u] [-s] [-w]
+ldap_db_path=/opt/zimbra/data/ldap/mdb/db/data.mdb
 
-sudo -i -u zimbra zmcontrol stop
-rm -f /opt/zimbra/data/ldap/mdb/db/data.mdb
-sudo -i -u zimbra /bin/bash -c "/opt/zimbra/common/sbin/slapadd -q -b '' -F '/opt/zimbra/data/ldap/config' -l '/opt/zimbra/data/ldap/mdb/db/ldap.bak'"
-sudo -i -u zimbra zmcontrol start
-/bin/bash /zimbra/update-zimbra
+if [ -f "${ldap_db_path}" ]; then
+    echo "${ldap_db_path} exists. Skipping LDAP backup restore"
+    echo "Starting services"
+    sudo -i -u zimbra zmcontrol start
+else
+    echo "Restoring LDAP database from backup"
+    sudo -i -u zimbra /bin/bash -c "/opt/zimbra/common/sbin/slapadd -q -b '' -F '/opt/zimbra/data/ldap/config' -l '/opt/zimbra/data/ldap/mdb/db/ldap.bak'"
+    echo "Starting services"
+    sudo -i -u zimbra zmcontrol start
+    /bin/bash /zimbra/update-zimbra
+fi
+
+echo "Starting ssh service..."
+/usr/sbin/service ssh start
+
 echo "STARTUP COMPLETE"
 /bin/sleep infinity
