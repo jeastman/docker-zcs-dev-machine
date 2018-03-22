@@ -91,6 +91,26 @@ And become the `zimbra` user as follows:
 
     su - zimbra
 
+## Resetting base ZCS Install
+
+With a recent upgrade to the `develop` branch, the system now creates a Docker volume that is
+mounted into the running `zcs-dev` container at `/opt/zimbra`.  That, along with some 
+minor updates to the entrypoint script, enables the system to retain all changes that
+you might have deployed into the ZCS system as well as any other changes you may have made.
+
+These changes will persist across container stopping and starting. If you wish to have the
+base ZCS install cleanly reset--like if you totally bork it--all you need to do is shut down
+the container,  delete the docker volume, and start it back up.  This is what it will 
+look like:
+
+    $ docker volume ls | grep opt_zimbra
+    local               dockerzcsdevmachine_opt_zimbra
+
+As you can see, the Docker volume that is created for the `zcs-dev` container
+is called `dockerzcsdevmachine_opt_zimbra`.  To delete it:
+
+    docker volume rm dockerzcsdevmachine_opt_zimbra
+
 
 ## Miscellaneous Notes
 
