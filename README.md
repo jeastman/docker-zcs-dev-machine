@@ -1,6 +1,6 @@
 # Overview
 
-This provides a container with ZCS installed and configured for development work.
+This provides a container with ZCS + SOLR installed and configured for development work.
 
 ## Installing Docker
 
@@ -14,9 +14,9 @@ Clone the dev machine docker image (this repo):
 
     git clone https://github.com/Zimbra/docker-zcs-dev-machine.git
     
-Check out the version you want to work with, e.g. for "develop" branch:
+Check out the version you want to work with, e.g. for "feature/solr" branch:
 
-    git checkout -b develop origin/develop
+    git checkout -b feature/solr origin/feature/solr
 
 ## Additional Configuration
 
@@ -125,6 +125,13 @@ is called `dockerzcsdevmachine_opt_zimbra`.  To delete it:
 
     docker volume rm dockerzcsdevmachine_opt_zimbra
 
+Similarly, with a recent update to the `feature/solr` branch, we now persist the
+SOLR data in a Docker volume:
+
+    $ docker volume ls | grep idx
+    local               dockerzcsdevmachine_idxvolume
+
+So you would also want to delete that Docker volume as well.
 
 ## Miscellaneous Notes
 
