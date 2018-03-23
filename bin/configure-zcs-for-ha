@@ -1,0 +1,147 @@
+#!/bin/bash
+# Upgrade ZCS to support SOLR + HA
+########################################################################
+# Prerequites - Do the following BEFORE running this script!
+########################################################################
+# Checkout  the specified branches of the following reposistories:
+#
+# |-------------------+---------------------|
+# | *Repo*            | *Branch*            |
+# |-------------------+---------------------|
+# | zm-mailbox        | feature/ha-combined |
+# | zm-build          | feature/ha          |
+# | zm-db-conf        | feature/na          |
+# | zm-ldap-utilities | develop             |
+# | zm-zcs            | develop             |
+# |-------------------+---------------------|
+#
+# Update the `zcs` variable (see the TODO below)
+#
+# ENVIRONMENT VARIABLES USED
+#
+# This script will use the following environment variable (that should be configured in your .env
+# file BEFORE `docker-compose up -d` as it is also used by the SOLR container start-up to determine
+# how it is started and conigured):
+#
+# SOLR_MODE cloud|standalone
+#
+
+# TODO - update this to point to the top-level directory where you have all of your repos checked out.
+zcs=/home/zimbra/zcs
+
+[ -z "$SOLR_MODE" ] && echo "SOLR_MODE not defined" && exit 1
+
+if [ $(whoami) != "root" ]
+then
+	echo "please run this as root"
+	exit 1
+fi
+
+
+function log {
+    lvl="$1"
+    msg="$2"
+
+    >&2 echo "$(date) [$lvl] $msg"
+}
+
+function log_error {
+   msg="$1"
+   log ERROR "$msg"
+}
+
+function log_info {
+   msg="$1"
+   log INFO "$msg"
+}
+
+if [ ! -d $zcs ]; then
+    log_error "Please edit the value of 'zcs' at the top of this script to point to where you have all of your repos checked out."
+    exit 1
+fi
+
+cd $zcs
+
+for r in zm-mailbox zm-build zm-db-conf zm-zcs zm-ldap-utilities; do
+    if [ ! -d $r ]; then
+        log_error "Please clone $r into '$zcs' and checkout the proper branch (see comments)"
+        exit 1
+    fi
+done
+
+log_info "installing zmupgrade.pm"
+cp zm-build/rpmconf/Upgrade/zmupgrade.pm /opt/zimbra/libexec/zmupgrade.pm
+chmod 755 /opt/zimbra/libexec/zmupgrade.pm
+
+log_info "installing database migration scripts"
+for s in migrate20170829-SearchHistory.pl migrate20180110-DistributedRedolog.pl; do
+    cp zm-db-conf/src/db/migration/$s /opt/zimbra/libexec/scripts/
+    chmod 775 /opt/zimbra/libexec/scripts/$s
+done
+
+log_info "patching zmsetup.pl"
+cat zm-build/rpmconf/Install/zmsetup.pl | sed '/use NetAddr/ a\zmupgrade::runSchemaUpgrade(108);\nzmupgrade::runSchemaUpgrade(109);\nexit;\n' > /opt/zimbra/libexec/zmsetup.pl
+chmod 755 /opt/zimbra/libexec/zmsetup.pl
+
+log_info "running patched zmsetup.pl"
+/opt/zimbra/libexec/zmsetup.pl
+
+log_info "installing database scripts"
+cp zm-db-conf/src/db/mysql/create_database.sql /opt/zimbra/db/create_database.sql
+chmod 444 /opt/zimbra/db/create_database.sql
+cp zm-db-conf/src/db/mysql/db.sql /opt/zimbra/db/db.sql
+chmod 444 /opt/zimbra/db/db.sql
+
+log_info "purging old lucene jar files"
+find /opt/zimbra -name 'lucene-*3.5*.jar' -delete
+
+log_info "purging old zkclient jar files"
+find /opt/zimbra -name 'zkclient*.jar' -delete
+
+for d in native common soap client store; do 
+    log_info "publishing local deps for zm-mailbox/$d"
+    sudo -i -u zimbra /bin/bash -c "cd $zcs/zm-mailbox/$d; ant clean compile publish-local"
+done
+sudo -i -u zimbra /bin/bash -c "zmmailboxdctl restart"
+
+
+for j in lucene-core-7.2.1.jar lucene-analyzers-common-7.2.1.jar solr-solrj-7.2.1.jar solr-core-7.2.1.jar noggit-0.7.jar httpmime-4.3.5.jar zookeeper-3.4.5.jar netty-all-4.1.13.Final.jar redisson-3.5.6.jar; do 
+    jp=$(find /home/zimbra/.ivy2/cache -name $j)
+        log_info "installing $jp"
+	cp $jp /opt/zimbra/lib/jars/
+	cp $jp /opt/zimbra/jetty/webapps/service/WEB-INF/lib/
+done
+
+log_info "fixing jar directory permissions"
+chmod -R a+r /opt/zimbra/lib/jars
+chmod -R a+r /opt/zimbra/jetty/webapps/service/WEB-INF/lib
+
+for d in native common soap client store; do 
+    log_info "deploying zm-mailbox/$d"
+    sudo -i -u zimbra /bin/bash -c "cd $zcs/zm-mailbox/$d; ant deploy"
+done
+sudo -i -u zimbra /bin/bash -c "zmmailboxdctl restart"
+
+
+log_info "updating LDAP schema"
+chmod -R o+w /opt/zimbra/common/etc/openldap/schema
+chmod o+w /opt/zimbra/conf/zimbra.ldif
+chmod +w /opt/zimbra/conf/attrs/zimbra-attrs.xml
+chmod -R o+w /opt/zimbra/common/etc/openldap/zimbra
+sudo -i -u zimbra /bin/bash -c "cd $zcs/zm-mailbox/store; ant update-ldap-schema"
+
+
+log_info "Updating zimbraSolrReplicationFactor"
+sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraSolrReplicationFactor 1"
+if [ "$SOLR_MODE" = "cloud" ]; then
+	log_info "Updating zimbraIndexURL - cloud mode"
+	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraIndexURL solrcloud:solr:9983"
+	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraEventBackendURL solrcloud:solr:9983"
+else
+	log_info "Updating zimbraIndexURL - standalone mode"
+	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraIndexURL solr:http://solr:8983/solr"
+	sudo -i -u zimbra /bin/bash -c "zmprov mcf zimbraEventBackendURL solr:http://solr:8983/solr"
+fi
+log_info "restarting services"
+sudo -i -u zimbra /bin/bash -c "zmcontrol restart"
+log_info "all done!"

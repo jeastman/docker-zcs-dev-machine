@@ -318,12 +318,12 @@ So you can `git fetch zcs-dev`, etc.  Very convenient.
 
 ## SOLR Support
 
-So make sure you have read the _Additional Configuration/SOLR-related Environment Variables_ section above first. A convenient script has been provided for you to use to update the base ZCS deployment to support SOLR.  That script is located in the `bin` repo directory and is called `configure-zcs-for-solr`.  After you have brought up your dev cluster and ZCS is up and running, just copy that script over to the top-level directory where you have all of your Zimbra repos checked out.
+So make sure you have read the _Additional Configuration/SOLR-related Environment Variables_ section above first. A convenient script has been provided for you to use to update the base ZCS deployment to support SOLR + HA.  That script is located in the `bin` repo directory and is called `configure-zcs-for-ha`.  After you have brought up your dev cluster and ZCS is up and running, just copy that script over to the top-level directory where you have all of your Zimbra repos checked out.
 
 Then, _make sure you read and follow_ the comments at the top of the script.  Then (while logged into the `zcs-dev` container), run the script (as `root`, from the top-level directory on the container where you have all of your repos checked-out and prepared according to the notes at the top of the script).
 
 The script is pretty noisy so I would recommend running it as follows:
 
-    ./configure-zcs-for-solr > /dev/null
+    ./configure-zcs-for-ha > /dev/null
 
 The script outputs status messages as it does its work to _stderr_ so you will be kept informed as it runs.
