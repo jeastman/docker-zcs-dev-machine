@@ -5,15 +5,15 @@
 ########################################################################
 # Checkout  the specified branches of the following reposistories:
 #
-# |-------------------+---------------------|
-# | *Repo*            | *Branch*            |
-# |-------------------+---------------------|
-# | zm-mailbox        | feature/ha-combined |
-# | zm-build          | feature/ha          |
-# | zm-db-conf        | feature/na          |
-# | zm-ldap-utilities | develop             |
-# | zm-zcs            | develop             |
-# |-------------------+---------------------|
+# |-------------------+---------------------+-----------------------------------------------------------------------------|
+# | *Repo*            | *Branch*            | *GIT*                                                                       |
+# |-------------------+---------------------+-----------------------------------------------------------------------------|
+# | zm-mailbox        | feature/ha-combined | git clone --branch feature/ha-combined git@github.com:Zimbra/zm-mailbox.git |
+# | zm-build          | feature/ha          | git clone --branch feature/ha git@github.com:Zimbra/zm-build.git            |
+# | zm-db-conf        | feature/na          | git clone --branch feature/ha git@github.com:Zimbra/zm-db-conf.git          |
+# | zm-ldap-utilities | develop             | git clone --branch develop git@github.com:Zimbra/zm-ldap-utilities.git      |
+# | zm-zcs            | develop             | git clone --branch develop git@github.com:Zimbra/zm-zcs.git                 |
+# |-------------------+---------------------+-----------------------------------------------------------------------------|
 #
 # Update the `zcs` variable (see the TODO below)
 #
