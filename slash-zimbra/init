@@ -19,5 +19,11 @@ fi
 echo "Starting ssh service..."
 /usr/sbin/service ssh start
 
+echo "Starting STAF service..."
+/usr/local/staf/startSTAFProc.sh >/opt/zimbra/log/staf.log 2>&1 &
+sleep 10
+/usr/local/staf/bin/STAF local service add service LOG LIBRARY STAFLog
+/usr/local/staf/bin/STAF local TRUST SET MACHINE '*' LEVEL 5
+
 echo "STARTUP COMPLETE"
 /bin/sleep infinity
