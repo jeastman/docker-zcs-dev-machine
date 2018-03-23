@@ -27,6 +27,8 @@ echo "Enable mailbox debugging"
 /zimbra/enable-debug.sh
 echo "Enabling local mail delivery"
 sudo -i -u zimbra zmprov mcf zimbraMtaLmtpHostLookup native
+echo "Disable trace logs"
+sudo -i -u zimbra zmprov mcf zimbraHttpDebugHandlerEnabled FALSE
 echo "Restarting mailbox"
 sudo -i -u zimbra zmmailboxdctl restart
 
