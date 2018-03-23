@@ -29,14 +29,13 @@
 # TODO - update this to point to the top-level directory where you have all of your repos checked out.
 zcs=/home/zimbra/zcs
 
-[ -z "$SOLR_MODE" ] && echo "SOLR_MODE not defined" && exit 1
-
 if [ $(whoami) != "root" ]
 then
 	echo "please run this as root"
 	exit 1
 fi
 
+[ -z "$SOLR_MODE" ] && echo "SOLR_MODE not defined" && exit 1
 
 function log {
     lvl="$1"
