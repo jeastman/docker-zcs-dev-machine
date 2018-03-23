@@ -103,8 +103,7 @@ for d in native common soap client store; do
 done
 sudo -i -u zimbra /bin/bash -c "zmmailboxdctl restart"
 
-
-for j in lucene-core-7.2.1.jar lucene-analyzers-common-7.2.1.jar solr-solrj-7.2.1.jar solr-core-7.2.1.jar noggit-0.7.jar httpmime-4.3.5.jar zookeeper-3.4.5.jar netty-all-4.1.13.Final.jar redisson-3.5.6.jar; do 
+for j in lucene-core-7.2.1.jar lucene-analyzers-common-7.2.1.jar solr-solrj-7.2.1.jar solr-core-7.2.1.jar noggit-0.7.jar httpmime-4.3.5.jar zookeeper-3.4.5.jar netty-all-4.1.13.Final.jar redisson-3.5.6.jar jackson-annotations-2.9.2.jar jackson-core-2.9.2.jar jackson-databind-2.9.2.jar jackson-dataformat-yaml-2.7.6.jar; do 
     jp=$(find /home/zimbra/.ivy2/cache -name $j)
         log_info "installing $jp"
 	cp $jp /opt/zimbra/lib/jars/
