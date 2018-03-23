@@ -20,7 +20,7 @@
 #
 
 SLEEP_SECS=10
-SLEEP_LONG_SECS=60
+SLEEP_LONG_SECS=20
 
 # Add an entry for the specified host_ip and host_fqdn to /etc/hosts, if necessary
 # Arguments:

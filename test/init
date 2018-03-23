@@ -13,10 +13,10 @@ source /zimbra/init-common
 # `S3_PATH`.  It should not contain any leading or trailing slashes.  The part before the first `/`
 # should be the name of the bucket.
 S3_PATH_DEFAULT="docker.zimbra.com/tests/zcs-foss-multi"
-ZIMBRA_DEFAULT_DOMAIN=$(cat /domain_name)
-ADMIN_PW=$(cat /var/run/secrets/admin_account_password)
-proxy_fqdn="zmc-proxy.${ZIMBRA_DEFAULT_DOMAIN}"
-mailbox_fqdn="zmc-mailbox.${ZIMBRA_DEFAULT_DOMAIN}"
+ZIMBRA_DEFAULT_DOMAIN="zcs-dev.test"
+ADMIN_PW=zimbra
+proxy_fqdn="zcs-dev.test"
+mailbox_fqdn="zcs-dev.test"
 
 run_soap=no
 run_genesis=no
@@ -141,8 +141,8 @@ function setup {
     if [ -f /run/secrets/dot-s3curl ]; then
         cp /run/secrets/dot-s3curl ${s3curl_config_path} && chmod 400 ${s3curl_config_path}
     fi
-    proxy_ip=$(wait_for_service zmc-proxy)
-    mailbox_ip=$(wait_for_service zmc-mailbox)
+    proxy_ip=$(wait_for_service zcs-dev)
+    mailbox_ip=${proxy_ip}
 
     echo "proxy service IP=${proxy_ip}, mailbox service IP=${mailbox_ip}"
 
@@ -152,9 +152,9 @@ function setup {
     # Update the config files for saoap-harness and genesis
     echo "updating soap-harness config"
     cat /opt/qa/soapvalidator/conf/global.properties.in | sed \
-      -e "s/ZIMBRA_HOST_NAME/zmc-proxy/" \
+      -e "s/ZIMBRA_HOST_NAME/zcs-dev/" \
       -e "s/ZIMBRA_DEFAULT_DOMAIN/${ZIMBRA_DEFAULT_DOMAIN}/" \
-      -e "s/MAILBOX_SERVICE_NAME/zmc-mailbox/" \
+      -e "s/MAILBOX_SERVICE_NAME/zcs-dev/" \
       -e "s/ADMIN_PORT/${ADMIN_PORT}/" \
       -e "s/HTTPS_PORT/${HTTPS_PORT}/" \
       -e "s/SOAPSERVICE_PORT/${SOAPSERVICE_PORT}/" \
