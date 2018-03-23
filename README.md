@@ -1,6 +1,35 @@
 # Overview
 
-This provides a container with ZCS + SOLR installed and configured for development work.
+This provides a container with ZCS + SOLR + TEST installed and configured for development work.
+
+## feature/solr-test notes
+
+Working with this branch is very similar to working with `feature/solr`.
+
+### What's Different
+
+You need to manually build the two images: `docker-compose build`
+
+### What's the Same
+
+You still need to configure ZCS for SOLR support as documented below in _SOLR Support_.
+
+### Other Notes
+
+Since data persistence via Docker volumes was added (in `develop` branch), I've 
+noticed that the `zcs-dev` container comes up faster than the `solr` container
+does after the first time (fresh `docker-compose up` without pre-populated
+Docker volumes). 
+
+And even though `solr` container is a dependency for `zcs-dev`, Docker considers
+the `solr` container to be avaiable as soon as it comes up (even though it
+is not fully initialized).  
+
+So you will probably want to do a `zmcontrol restart` before using ZCS 
+in this instance.
+
+TODO - Implement a healthcheck for `solr` that we can tell Docker to use
+       so it knows when it is fully up and ready.
 
 ## Installing Docker
 
