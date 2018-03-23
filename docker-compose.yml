@@ -2,7 +2,10 @@ version: "3.3"
 
 services:
   zcs-dev:
-    image: zimbra/zcs-dev:8.8.8ga
+    image: zcs-dev:latest
+    build:
+      context: '.'
+      dockerfile: 'zcs-dev/Dockerfile'
     depends_on:
       - solr
     env_file: .env
@@ -43,6 +46,23 @@ services:
     volumes:
       - $REPO_DIR/solr:/solr
       - idxvolume:/opt/solr/server/solr
+  test:
+    image: test:latest
+    container_name: test
+    hostname: test
+    build:
+      context: '.'
+      dockerfile: 'test/Dockerfile'
+    depends_on:
+      - zcs-dev
+    entrypoint:
+      - /zimbra/init
+      - --shutdown
+      - "no"
+    environment:
+      ADMIN_PORT: "7071"
+      HTTPS_PORT: "443"
+      SOAPSERVICE_PORT: "8443"
 
 networks:
   default:
