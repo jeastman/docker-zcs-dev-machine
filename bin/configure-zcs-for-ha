@@ -115,12 +115,8 @@ log_info "fixing jar directory permissions"
 chmod -R a+r /opt/zimbra/lib/jars
 chmod -R a+r /opt/zimbra/jetty/webapps/service/WEB-INF/lib
 
-for d in native common soap client store; do 
-    log_info "deploying zm-mailbox/$d"
-    sudo -i -u zimbra /bin/bash -c "cd $zcs/zm-mailbox/$d; ant deploy"
-done
-sudo -i -u zimbra /bin/bash -c "zmmailboxdctl restart"
-
+log_info "deploying zm-mailbox jars: native, common, soap, client, store"
+sudo -i -u zimbra /bin/bash -c "cd $zcs/zm-mailbox/store; ant deploy-foss"
 
 log_info "updating LDAP schema"
 chmod -R o+w /opt/zimbra/common/etc/openldap/schema
