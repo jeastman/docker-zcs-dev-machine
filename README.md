@@ -2,7 +2,7 @@
 
 This provides a container with ZCS + SOLR + TEST installed and configured for development work.
 
-## feature/solr-test notes
+## feature/ha-test notes
 
 Working with this branch is very similar to working with `feature/solr`.
 
@@ -43,9 +43,9 @@ Clone the dev machine docker image (this repo):
 
     git clone https://github.com/Zimbra/docker-zcs-dev-machine.git
     
-Check out the version you want to work with, e.g. for "feature/solr" branch:
+Check out the version you want to work with, e.g. for "feature/ha-test" branch:
 
-    git checkout -b feature/solr origin/feature/solr
+    git checkout -b feature/ha-test origin/feature/ha-test
 
 ## Additional Configuration
 
