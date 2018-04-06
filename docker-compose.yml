@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   zcs-dev:
-    image: zimbra/zcs-dev:8.8.6.2ga
+    image: zimbra/zcs-dev:8.8.8ga
     env_file: .env
     entrypoint:
       - /zimbra/init
