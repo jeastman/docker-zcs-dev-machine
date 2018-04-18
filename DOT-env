@@ -3,16 +3,16 @@ GITEMAIL="user1@example.com"
 # This should be your first and last name.
 GITNAME="First Last"
 # NOTES:
-1. No quotes around the following
-2. Relative paths, such as the following, will work in most situations.
-3. If you are using Docker for Windows and are issuing docker commands from the
-   Windows Subsystem for Linux (WSL) you should do the following:
-   a. Work from a git repo that is checked out "on the windows side", and so you would
-      access it from the WSL shell from a path that looks like this:
-	  /mnt/c/Users/<user>/...
-   b. Specify absolute path value in these two environment variables (no trailing slashes, please).
-   c. The abosolute path should use the modern path syntax.  See the examples in the commented out
-      values that follow.
+# 1. No quotes around the following
+# 2. Relative paths, such as the following, will work in most situations.
+# 3. If you are using Docker for Windows and are issuing docker commands from the
+#    Windows Subsystem for Linux (WSL) you should do the following:
+#    a. Work from a git repo that is checked out "on the windows side", and so you would
+#       access it from the WSL shell from a path that looks like this:
+# 	  /mnt/c/Users/<user>/...
+#    b. Specify absolute path value in these two environment variables (no trailing slashes, please).
+#    c. The abosolute path should use the modern path syntax.  See the examples in the commented out
+#       values that follow.
 HOME_ZIMBRA=./home-zimbra
 REPO_DIR=.
 #HOME_ZIMBRA=/c/Users/gordy/Projects/d/docker-zcs-dev-machine/home-zimbra
