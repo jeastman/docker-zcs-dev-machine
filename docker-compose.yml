@@ -4,15 +4,19 @@ services:
   redis:
     image: library/redis
     hostname: redis
-    container_name: redis
   zcs-dev:
     image: zcs-dev:latest
     build:
       context: '.'
       dockerfile: 'zcs-dev/Dockerfile'
+      cache_from: [ 'zcs-dev/latest' ]
     depends_on:
       - solr
-    env_file: .env
+    environment:
+      GITEMAIL: ${GITEMAIL}
+      GITNAME: "${GITNAME}"
+      SOLR_MODE: ${SOLR_MODE}
+      SOLR_MEMORY: ${SOLR_MEMORY}
     entrypoint:
       - /zimbra/init
     volumes:
@@ -23,8 +27,6 @@ services:
         target: /opt/zimbra
         volume:
           nocopy: false
-    container_name: zcs-dev
-    domainname: test
     hostname: zcs-dev
     ports:
       - "2222:22"
@@ -35,22 +37,26 @@ services:
       - "9998:9998"
       - "9999:9999"
   solr:
-    image: zimbra/zm-solr-docker:7.2-20180315
-    container_name: solr
-    env_file: .env
-    entrypoint: /solr/entrypoint
+    image: zcs-solr:latest
+    build:
+      context: '.'
+      dockerfile: 'solr/Dockerfile'
+      cache_from: [ 'zcs-solr/latest' ]
+    environment:
+      SOLR_MODE: ${SOLR_MODE}
+      SOLR_MEMORY: ${SOLR_MEMORY}
     ports:
       - "8983:8983"
     volumes:
       - $REPO_DIR/solr:/solr
       - idxvolume:/opt/solr/server/solr
   test:
-    image: test:latest
-    container_name: test
+    image: zcs-test:latest
     hostname: test
     build:
       context: '.'
       dockerfile: 'test/Dockerfile'
+      cache_from: [ 'zcs-test/latest' ]
     depends_on:
       - zcs-dev
     entrypoint:
@@ -61,6 +67,7 @@ services:
       ADMIN_PORT: "7071"
       HTTPS_PORT: "443"
       SOAPSERVICE_PORT: "8443"
+      
 
 volumes:
   opt_zimbra: {}
