@@ -5,9 +5,6 @@ services:
     image: library/redis
     hostname: redis
     container_name: redis
-    networks:
-      default:
-        ipv4_address: 10.0.0.6
   zcs-dev:
     image: zcs-dev:latest
     build:
@@ -29,9 +26,6 @@ services:
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev
-    networks:
-      default:
-        ipv4_address: 10.0.0.3
     ports:
       - "2222:22"
       - "7071:7071"
@@ -44,9 +38,6 @@ services:
     image: zimbra/zm-solr-docker:7.2-20180315
     container_name: solr
     env_file: .env
-    networks:
-      default:
-        ipv4_address: 10.0.0.4
     entrypoint: /solr/entrypoint
     ports:
       - "8983:8983"
@@ -70,14 +61,6 @@ services:
       ADMIN_PORT: "7071"
       HTTPS_PORT: "443"
       SOAPSERVICE_PORT: "8443"
-
-networks:
-  default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.0.0.0/24
 
 volumes:
   opt_zimbra: {}
