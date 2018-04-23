@@ -41,7 +41,7 @@ services:
     entrypoint: /opt/zookeeper/zk/entrypoint
     volumes:
       - /home/akshat/zmdocker/docker-zcs-dev-machine/zk:/opt/zookeeper/zk:rw
-      - /home/akshat/zmdocker/docker-zcs-dev-machine/slash-data:/tmp/zookeeper:rw
+      - zookeeper_data:/tmp/zookeeper:rw
   solr:
     image: zimbra/zm-solr-docker:7.2-20180315
     depends_on:
@@ -69,3 +69,4 @@ networks:
 volumes:
   opt_zimbra: {}
   idxvolume: {}
+  zookeeper_data: {}
