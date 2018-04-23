@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Initializing Zookeeper..."
+
+# Start zookeeper
+exec /opt/zookeeper/bin/zkServer.sh start-foreground

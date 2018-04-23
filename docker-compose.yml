@@ -2,22 +2,20 @@ version: "3.3"
 
 services:
   zcs-dev:
-    image: zimbra/zcs-dev:8.8.8ga
+    image: zimbra/zcs-dev:8.8.6.2ga
     depends_on:
       - solr
     env_file: .env
     entrypoint:
       - /zimbra/init
     volumes:
-      - $REPO_DIR/slash-zimbra:/zimbra
-      - $HOME_ZIMBRA:/home/zimbra:delegated
+      - /home/akshat/zmdocker/docker-zcs-dev-machine/slash-zimbra:/zimbra:rw
+      - /home/akshat/zmdocker/docker-zcs-dev-machine/home-zimbra:/home/zimbra:delegated
       - type: volume
         source: opt_zimbra
         target: /opt/zimbra
         volume:
           nocopy: false
-    container_name: zcs-dev
-    domainname: test
     hostname: zcs-dev
     networks:
       default:
@@ -30,9 +28,25 @@ services:
       - "8993:993"
       - "9998:9998"
       - "9999:9999"
+  zmc-zookeeper:
+    image: localhost:5000/zmc-zookeeper
+    hostname: zookeeper-zcs
+    env_file: .env
+    networks:
+      default:
+        ipv4_address: 10.0.0.5
+    ports:
+      - "2888:2888"
+      - "3888:3888"
+    entrypoint: /opt/zookeeper/zk/entrypoint
+    volumes:
+      - /home/akshat/zmdocker/docker-zcs-dev-machine/zk:/opt/zookeeper/zk:rw
+      - /home/akshat/zmdocker/docker-zcs-dev-machine/slash-data:/tmp/zookeeper:rw
   solr:
     image: zimbra/zm-solr-docker:7.2-20180315
-    container_name: solr
+    depends_on:
+      - zmc-zookeeper
+    hostname: solr
     env_file: .env
     networks:
       default:
@@ -41,12 +55,12 @@ services:
     ports:
       - "8983:8983"
     volumes:
-      - $REPO_DIR/solr:/solr
-      - idxvolume:/opt/solr/server/solr
+      - /home/akshat/zmdocker/docker-zcs-dev-machine/solr:/solr:rw
+      - idxvolume:/opt/solr/server/solr:rw
 
 networks:
   default:
-    driver: bridge
+    driver: overlay
     ipam:
       driver: default
       config:
