@@ -1,0 +1,16 @@
+#!/bin/bash
+source .env
+git_email="$GITEMAIL"
+gitname=$"$GITNAME"
+repo_dir="$REPO_DIR"
+home_zimbra="$HOME_ZIMBRA"
+solr_mode="$SOLR_MODE"
+solr_memory="$SOLR_MEMORY"
+
+REPO_DIR=${repo_dir} \
+HOME_ZIMBRA=${home_zimbra} \
+GITEMAIL=${git_email} \
+GITNAME=${git_name} \
+SOLR_MODE=${solr_mode} \
+SOLR_MEMORY=${solr_memory} \
+docker stack deploy -c docker-compose.yml zk-test

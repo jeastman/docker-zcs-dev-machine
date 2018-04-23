@@ -5,21 +5,22 @@ services:
     image: zimbra/zcs-dev:8.8.6.2ga
     depends_on:
       - solr
-    env_file: .env
+    environment:
+      GITEMAIL: ${GITEMAIL}
+      GITNAME: "${GITNAME}"
+      SOLR_MODE: ${SOLR_MODE}
+      SOLR_MEMORY: ${SOLR_MEMORY}
     entrypoint:
       - /zimbra/init
     volumes:
-      - /home/akshat/zmdocker/docker-zcs-dev-machine/slash-zimbra:/zimbra:rw
-      - /home/akshat/zmdocker/docker-zcs-dev-machine/home-zimbra:/home/zimbra:delegated
+      - $REPO_DIR/slash-zimbra:/zimbra
+      - $HOME_ZIMBRA:/home/zimbra:delegated
       - type: volume
         source: opt_zimbra
         target: /opt/zimbra
         volume:
           nocopy: false
     hostname: zcs-dev
-    networks:
-      default:
-        ipv4_address: 10.0.0.3
     ports:
       - "2222:22"
       - "7071:7071"
@@ -29,7 +30,7 @@ services:
       - "9998:9998"
       - "9999:9999"
   zmc-zookeeper:
-    image: localhost:5000/zmc-zookeeper
+    image: zmc-zookeeper
     hostname: zookeeper-zcs
     env_file: .env
     networks:
@@ -41,7 +42,7 @@ services:
       - "3888:3888"
     entrypoint: /opt/zookeeper/zk/entrypoint
     volumes:
-      - /home/akshat/zmdocker/docker-zcs-dev-machine/zk:/opt/zookeeper/zk:rw
+      - $REPO_DIR/zk:/opt/zookeeper/zk:rw
       - zookeeper_data:/tmp/zookeeper:rw
   solr:
     image: zimbra/zm-solr-docker:7.2-20180315
@@ -56,16 +57,9 @@ services:
     ports:
       - "8983:8983"
     volumes:
-      - /home/akshat/zmdocker/docker-zcs-dev-machine/solr:/solr:rw
-      - idxvolume:/opt/solr/server/solr:rw
+      - $REPO_DIR/solr:/solr:rw
+      - idxvolume:/opt/solr/server/solr
 
-networks:
-  default:
-    driver: overlay
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.0.0.0/24
 
 volumes:
   opt_zimbra: {}
