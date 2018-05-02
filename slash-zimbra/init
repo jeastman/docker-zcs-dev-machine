@@ -1,4 +1,12 @@
 #!/bin/bash
+
+echo "Updating the hostname in /etc/hosts file..."
+cp /etc/hosts ~/hosts.new
+sed -i '$d' ~/hosts.new
+echo `tail -n 1 /etc/hosts | cut -f 1` "    zcs-dev.test zcs-dev" >> ~/hosts.new
+cp -f ~/hosts.new /etc/hosts
+rm ~/hosts.new
+
 ldap_db_path=/opt/zimbra/data/ldap/mdb/db/data.mdb
 
 if [ -f "${ldap_db_path}" ]; then

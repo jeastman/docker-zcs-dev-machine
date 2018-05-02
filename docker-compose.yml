@@ -30,8 +30,8 @@ services:
       - "9998:9998"
       - "9999:9999"
   zmc-zookeeper:
-    image: zmc-zookeeper
-    hostname: zookeeper-zcs
+    image: localhost:5000/zmc-zookeeper
+    hostname: zmc-zookeeper
     env_file: .env
     networks:
       default:
@@ -44,6 +44,9 @@ services:
     volumes:
       - $REPO_DIR/zk:/opt/zookeeper/zk:rw
       - zookeeper_data:/tmp/zookeeper:rw
+    deploy:
+      mode: replicated
+      replicas: 2
   solr:
     image: zimbra/zm-solr-docker:7.2-20180315
     depends_on:

@@ -6,17 +6,24 @@
 [ -z "$SOLR_MODE" ] && echo "SOLR_MODE not defined" && exit 1
 [ -z "$SOLR_MEMORY" ] && echo "SOLR_MEMORY not defined" && exit 1
 
+echo "Started polling the ZooKeeper for response..."
+while ! [ $? -eq 52 ]
+do
+  echo "$(date) - still trying for getting response from ZooKeeper..."
+  sleep 1
+  curl -f http://zmc-zookeeper:2181
+done
+echo "$(date) - Got response back from ZooKeeper, connected successfully..."
+
+
 echo "Initializing SOLR_HOME..."
 cp -r /opt/solr/init-solr-home/* /opt/solr/server/solr/
 
 echo "Starting SOLR in $SOLR_MODE mode with $SOLR_MEMORY RAM"
 
 if [ "$SOLR_MODE" = "cloud" ]; then
-	#/opt/solr/bin/solr start -c -m $SOLR_MEMORY
 	/opt/solr/bin/solr start -c -m $SOLR_MEMORY -z zmc-zookeeper:2181
-	#/opt/solr/bin/solr zk upconfig -n zimbra -d /opt/solr/server/solr/configsets/zimbra/ -z localhost:9983
 	/opt/solr/bin/solr zk upconfig -n zimbra -d /opt/solr/server/solr/configsets/zimbra/ -z zmc-zookeeper:2181
-	#/opt/solr/bin/solr zk upconfig -n events -d /opt/solr/server/solr/configsets/events/ -z localhost:9983
 	/opt/solr/bin/solr zk upconfig -n events -d /opt/solr/server/solr/configsets/events/ -z zmc-zookeeper:2181
 else
 	/opt/solr/bin/solr start -m $SOLR_MEMORY -z zmc-zookeeper:2181

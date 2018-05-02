@@ -13,4 +13,4 @@ GITEMAIL=${git_email} \
 GITNAME=${git_name} \
 SOLR_MODE=${solr_mode} \
 SOLR_MEMORY=${solr_memory} \
-docker stack deploy -c docker-compose.yml zk-test
+docker stack deploy -c docker-compose.yml zkCluster

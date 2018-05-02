@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Copying the ZooKeeper configuration file..."
+cp -f /opt/zookeeper/zk/zoo.cfg /opt/zookeeper/conf
+
 echo "Initializing Zookeeper..."
 
 # Start zookeeper
