@@ -93,7 +93,7 @@ Install docker-compose.
 
     sudo mkdir -p /usr/local/bin
     sudo chown ${USER}:${USER} /usr/local/bin
-    curl -L https://github.com/docker/compose/releases/download/1.15.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    curl -L https://github.com/docker/compose/releases/download/1.21.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
 
 
