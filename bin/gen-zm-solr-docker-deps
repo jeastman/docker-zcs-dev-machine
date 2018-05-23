@@ -7,16 +7,17 @@
 # 1. You are using a standard development configuration as encoded in docker-zcs-dev-machine.
 # 2. You have copied this script to the top-level directory of you development build container
 #    where you have the below-listed git repos checked out.
+# 3. *** new *** - working with repos in the ZimbraOS org
 #
 # Prerequisites:
 #
 # 1. Check out the develop branch of zm-zcs
-# 2. Check out the feature/solr branch of zm-build. If necessary create & populate the
+# 2. Check out the develop branch of zm-build. If necessary create & populate the
 #    following files in zm-build/RE: MAJOR, MINOR, MICRO
-# 3. Check out the feature/solr branch of zm-mailbox
+# 3. Check out the develop branch of zm-mailbox
 #    Run `ant clean` from zm-mailbox directory
 #    Run `ant publish-foss-local` from zm-mailbox/store directory
-# 4. Check out the feature/solr branch of zm-solr and run `ant clean compile jar` from
+# 4. Check out the develop branch of zm-solr and run `ant clean compile jar` from
 #    inside zm-solr.
 #
 # Generating uploading the SOLR deps

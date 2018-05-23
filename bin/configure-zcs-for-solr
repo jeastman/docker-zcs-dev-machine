@@ -2,12 +2,14 @@
 # Upgrade ZCS to support SOLR
 ########################################################################
 # Prerequites - Do the following BEFORE running this script!
+#
+# *** Now working with repos in the ZimbraOS org
+#
 ########################################################################
-# Checkout feature/solr branch of:
+# Checkout develop branch of:
 # - zm-mailbox
 # - zm-build
 # - zm-db-conf
-# Checkout develop branch of
 # - zm-ldap-utilities
 # - zm-zcs
 #
