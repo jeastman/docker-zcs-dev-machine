@@ -131,7 +131,7 @@ URL:
 
     https://zcs-dev.test:8443
 
-Take a look at the `docker-compose.yml` file to see all of the port mappings.
+Take a look at the `docker-compose.yml` file to see all of the port mappings. If you see the login screen then you are all set. In case you want to actually log in to play with the UI, then you will need to set up a domain and at least one account (run zmprov commands after logging into the docker instance).
 
 If you need help seeing up a development environment, please take a look at [Setting up Eclipse and ItelliJ Community Edition](https://github.com/Zimbra/zm-mailbox/wiki/Setting-up-Eclipse-and-IntelliJ-IDEA-Community-Edition)
 
