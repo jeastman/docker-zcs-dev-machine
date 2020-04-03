@@ -39,7 +39,7 @@ do
     if [ "$f" = "DOT-ssh" ]
     then
 		for f2 in ${F}/*; do
-			if [ $(basename $f2) = "authorized_keys" ]; then
+			if [ "$(basename $f2)" = "authorized_keys" ]; then
 				cat ${f2} >> /opt/zimbra/.ssh/authorized_keys
 			else
 				cp ${f2} /opt/zimbra/.ssh/
@@ -60,4 +60,3 @@ done
 
 sed -i.bak "s/GITEMAIL/${GITEMAIL}/" /opt/zimbra/.gitconfig
 sed -i.bak "s/GITNAME/${GITNAME}/" /opt/zimbra/.gitconfig
-

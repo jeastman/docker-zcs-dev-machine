@@ -1,8 +1,8 @@
 #!/bin/bash
 DP=$(dirname $0)
-BUILD_SLEEP=30
+BUILD_SLEEP=5
 NAME=zcs-dev
-TAG=8.8.12ga
+TAG=8.8.15ga
 REPO=zimbra/zcs-dev
 REPO_BASE="${REPO}-base"
 IMAGE="${REPO}:${TAG}"
@@ -12,9 +12,8 @@ function wait_build {
     DONE=no
     while [ "${DONE}" == "no" ]
     do
-        echo "$(date) - Waiting for build to complete..."
         sleep ${BUILD_SLEEP}
-        docker logs zcs-dev | grep -q 'SETUP COMPLETE'
+        docker logs zcs-dev-base | grep -q 'SETUP COMPLETE'
         if [ $? -eq 0 ]
         then
             echo "$(date) - Build has finished..."
@@ -23,17 +22,24 @@ function wait_build {
     done
 }
 
+
 echo "$(date) - Creating intermediate build image ${IMAGE_BASE}..."
-docker-compose -f "${DP}/docker-compose-base.yml" up -d
+docker build -t "${IMAGE_BASE}" --ulimit nofile=32768:32768 -f Dockerfile-base .
+
+echo "$(date) - Running initial setup on ${IMAGE_BASE}..."
+docker run --rm --name zcs-dev-base --hostname zcs-dev.test --privileged --ulimit nofile=32768:32768 "${IMAGE_BASE}" &
+
 wait_build
 
 echo "$(date) - Pausing containers..."
-docker-compose -f "${DP}/docker-compose-base.yml" pause
+#docker-compose -f "${DP}/docker-compose-base.yml" pause
+docker pause zcs-dev-base
 echo "$(date) - Creating image ${IMAGE} from paused container ${NAME}..."
-docker export ${NAME} | docker import - ${IMAGE}
-echo "$(date) - Shutting build containers down..."
-docker-compose -f "${DP}/docker-compose-base.yml" down
-echo "$(date) - Removing intermediate build image ${IMAGE_BASE}"
-docker rmi ${IMAGE_BASE}
-echo "$(date) - Docker image ${IMAGE} is ready. Run with 'docker-compose up -d'"
+docker export "${NAME}-base" | docker import - "${IMAGE}"
+echo "$(date) - Shutting build container down..."
+#docker-compose -f "${DP}/docker-compose-base.yml" down
+docker stop zcs-dev-base
+#echo "$(date) - Removing intermediate build image ${IMAGE_BASE}"
+#docker rmi ${IMAGE_BASE}
 
+echo "$(date) - Docker image ${IMAGE} is ready. Run with 'docker-compose up -d'"

@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   zcs-dev:
-    image: zimbra/zcs-dev:8.8.12ga
+    image: zimbra/zcs-dev:8.8.15ga
     env_file: .env
     entrypoint:
       - /zimbra/init
@@ -14,29 +14,29 @@ services:
         target: /opt/zimbra
         volume:
           nocopy: false
-
+    privileged: true
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 32768
+        hard: 32768
     container_name: zcs-dev
     domainname: test
     hostname: zcs-dev
-    networks:
-      default:
-        ipv4_address: 10.0.0.3
     ports:
       - "2222:22"
       - "7071:7071"
       - "8143:143"
-      - "8443:443"
+      - "9443:443"
       - "8993:993"
       - "9998:9998"
       - "9999:9999"
+    networks:
+      default:
 
 networks:
   default:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.0.0.0/24
 
 volumes:
   opt_zimbra: {}
