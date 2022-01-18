@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # Install Basic Packages
 RUN apt-get update && \
@@ -27,7 +27,7 @@ RUN apt-get update && \
     software-properties-common \
     vim \
     wget && \
-	apt-get clean
+    apt-get clean
 
 # Trick build into skipping resolvconf as docker overrides for DNS
 # This is currently required by our installer script. Hopefully be
@@ -36,19 +36,19 @@ RUN apt-get update && \
 # is breaking install.sh
 RUN echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
 RUN mkdir -p /tmp/release && \
-    curl -s -k -o /tmp/zcs.tgz 'https://files.zimbra.com.s3.amazonaws.com/downloads/8.8.15_GA/zcs-8.8.15_GA_3869.UBUNTU18_64.20190918004220.tgz' && \
-	tar xzvf /tmp/zcs.tgz -C /tmp/release --strip-components=1 && \
+    curl -s -k -o /tmp/zcs.tgz 'https://files.zimbra.com/downloads/8.8.15_GA/zcs-8.8.15_GA_4179.UBUNTU20_64.20211118033954.tgz' && \
+    tar xzvf /tmp/zcs.tgz -C /tmp/release --strip-components=1 && \
     rm /tmp/zcs.tgz
 COPY ./slash-zimbra-base /zimbra
 WORKDIR /tmp/release
 RUN chmod +x /zimbra/init && \
-	groupadd -r -g 1000 zimbra && \
+    groupadd -r -g 1000 zimbra && \
     useradd -r -g zimbra -u 1000 -b /opt -s /bin/bash zimbra && \
     sed -i.bak 's/checkRequired/# checkRequired/' install.sh && \
     ./install.sh -s -x --skip-upgrade-check < /zimbra/software-install-responses && \
-#	rm -rf /tmp/release && \
-	apt-get clean && \
-	chmod +x /zimbra/init
+#   rm -rf /tmp/release && \
+    apt-get clean && \
+    chmod +x /zimbra/init
 WORKDIR /zimbra
 CMD /zimbra/init
 EXPOSE 22 25 80 110 143 443 465 587 993 995 7071 8443 9998 9999
